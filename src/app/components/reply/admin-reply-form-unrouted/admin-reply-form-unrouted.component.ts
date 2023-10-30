@@ -3,7 +3,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { IReply, formOperation } from 'src/app/model/model.interfaces';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { IReply, IThread, IUser, formOperation } from 'src/app/model/model.interfaces';
+import { AdminUserSelectionUnroutedComponent } from '../../user/admin-user-selection-unrouted/admin-user-selection-unrouted.component';
 
 @Component({
   selector: 'app-admin-reply-form-unrouted',
@@ -16,14 +18,17 @@ export class AdminReplyFormUnroutedComponent implements OnInit {
   @Input() operation: formOperation = 'NEW'; // new or edit
 
   replyForm!: FormGroup;
-  reply: IReply = {} as IReply;
+  reply: IReply = { user: {} } as IReply;
   status: HttpErrorResponse | null = null;
+
+  oDynamicDialogRef: DynamicDialogRef | undefined;
 
   constructor(
     private formBuilder: FormBuilder,
     private httpClient: HttpClient,
     private router: Router,
-    private matSnackBar: MatSnackBar
+    private matSnackBar: MatSnackBar,
+    public oDialogService: DialogService
   ) {
     this.initializeForm(this.reply);
   }
@@ -89,5 +94,23 @@ export class AdminReplyFormUnroutedComponent implements OnInit {
         });
       }
     }
+  }
+
+  onShowUsersSelection() {
+    this.oDynamicDialogRef = this.oDialogService.open(AdminUserSelectionUnroutedComponent, {
+      header: 'Select a User',
+      width: '80%',
+      contentStyle: { overflow: 'auto' },
+      baseZIndex: 10000,
+      maximizable: true
+    });
+
+    this.oDynamicDialogRef.onClose.subscribe((oUser: IUser) => {
+      if (oUser) {
+        console.log(oUser);
+        this.reply.user = oUser;
+        this.replyForm.controls['user'].patchValue({ id: oUser.id })
+      }
+    });
   }
 }

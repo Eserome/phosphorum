@@ -29,18 +29,25 @@
             <mat-error *ngIf="hasError('body', 'maxlength')">Excede el límite de caracteres</mat-error>
           </mat-form-field>
         </div>
-        <div class="form-group">
-          <mat-form-field>
-            <mat-label>Usuario:</mat-label>
-            <input matInput formControlName="user" placeholder="Usuario" required>
-            <mat-error *ngIf="hasError('user', 'required')">El nombre de usuario es requerido</mat-error>
-          </mat-form-field>
+        <div formGroupName="user">
+          <div class="form-group">
+            <mat-form-field>
+              <mat-label>Usuario:</mat-label>
+              <input matInput formControlName="id" placeholder="Usuario" required [value]="reply.user.id">
+              <mat-error *ngIf="hasError('user', 'required')">El nombre de usuario es requerido</mat-error>
+            </mat-form-field>
+            <button class="btn btn-primary" type="button" (click)="onShowUsersSelection()"> <i class="pi pi-search"></i>
+              Find a user</button>
+              {{reply.user.name}} {{reply.user.surname}}
+          </div>
         </div>
+       
         <div class="form-group">
           <mat-form-field>
             <mat-label>Thread:</mat-label>
             <input matInput formControlName="thread" placeholder="ID del thread" required>
             <mat-error *ngIf="hasError('thread', 'required')">El ID del thread es requerido</mat-error>
+            
           </mat-form-field>
         </div>
 
